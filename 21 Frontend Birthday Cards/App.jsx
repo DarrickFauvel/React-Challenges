@@ -4,8 +4,7 @@ import FrontMessage from "./components/FrontMessage"
 import InnerMessage from "./components/InnerMessage"
 
 export default function App() {
-	
-/* Challenge
+  /* Challenge
 
 	The card opens and closes when the user clicks on the cover, but the card company wants a more sophisticated way of controlling it — one that simulates a finger swipe with the user's mouse. Your task is to set one up as follows:
 		
@@ -23,23 +22,43 @@ export default function App() {
 	Note: You will have to replace or modify the cardOpen state, the onClick event handler on line 35, and the way the "open" class is currently being applied on line 36. 
 */
 
-	const [cardOpen, setCardOpen] = React.useState(false)
+  const [cardOpen, setCardOpen] = React.useState(false)
+  const [startX, setStartX] = React.useState(null)
 
-	return (
-		<div className="wrapper">
-			<Header />
-			<div className="card">
-				<InnerMessage />
-				
-				<div
-					onClick={()=> setCardOpen(!cardOpen)}
-					className={`cover ${cardOpen && "open"}`}
-				>
-					<FrontMessage /> 
-					<img src="./images/forLoop.png" />
-				</div>
-				
-			</div>
-		</div>
-	)
+  const handleMouseDown = (e) => {
+    setCardOpen(false)
+    setStartX(e.clientX)
+  }
+
+  const handleMouseMove = (e) => {
+    if (startX === null) return
+    const currentX = e.clientX
+    const deltaX = startX - currentX
+    if (deltaX > 50) {
+      setCardOpen(true)
+      setStartX(null)
+    }
+  }
+
+  const handleMouseUp = (e) => {
+    setStartX(null)
+  }
+
+  return (
+    <div className="wrapper">
+      <Header />
+      <div className="card">
+        <InnerMessage />
+
+        <div
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          // onMouseUp={handleMouseUp}
+          className={`cover ${cardOpen && "open"}`}>
+          <FrontMessage />
+          <img src="./images/forLoop.png" />
+        </div>
+      </div>
+    </div>
+  )
 }
