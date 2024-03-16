@@ -2,8 +2,7 @@ import React from "react"
 import TopText from "./components/TopText"
 
 export default function App() {
-        
-/* Challenge
+  /* Challenge
     
     The file input isn't fully set up yet. Your task is to finish it as follows:
   
@@ -24,22 +23,44 @@ export default function App() {
        
 */
 
-	const [filesToUpload, setFilesToUpload] = React.useState([])
-	
-	function handleSubmit(e) {
-		e.preventDefault()
-		filesToUpload.forEach(file => console.log(file))
-	}
+  const [filesToUpload, setFilesToUpload] = React.useState([])
 
-	return (
-		<form onSubmit={handleSubmit}>
-			<TopText />
-			
-			<input 
-				type="file"
-			/>
-			
-			<button>Upload </button>
-		</form>
-	)
+  const convertObjectToArray = (object) => Array.from(object)
+
+  const createNewObjectShape = (object) => ({
+    fileName: object.name,
+    fileType: object.type,
+    fileSize: object.size,
+  })
+
+  const createNewObjectArray = (array) =>
+    array.map((file) => createNewObjectShape(file))
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    filesToUpload.forEach((file) => console.log(file))
+  }
+
+  function handleChange(e) {
+    const filesListObject = e.target.files
+    const filesListArray = convertObjectToArray(filesListObject)
+    const newFilesListArray = createNewObjectArray(filesListArray)
+    setFilesToUpload(newFilesListArray)
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <TopText />
+
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        require="true"
+        multiple
+        onChange={handleChange}
+      />
+
+      <button>Upload </button>
+    </form>
+  )
 }
