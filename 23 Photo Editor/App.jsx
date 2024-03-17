@@ -23,19 +23,22 @@ export default function App() {
 		4. Try to make your code as DRY as possible! 
 */
 
-  const rootStyles = {
-    "--brightness": filter.brightness,
-    "--contrast": filter.contrast,
-    "--saturation": filter.saturation,
+  const updateStyle = () => {
+    for (const property in filter) {
+      document
+        .querySelector(":root")
+        .style.setProperty(`--${property}`, filter[property])
+    }
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setFilter((prev) => ({ ...prev, [name]: value }))
+    updateStyle()
   }
 
   return (
-    <div className="main-container" style={rootStyles}>
+    <div className="main-container">
       <h1>
         <span>📷</span> Photo Editor <span>📷</span>
       </h1>
