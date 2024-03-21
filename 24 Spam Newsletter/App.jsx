@@ -3,15 +3,15 @@ import emailList from "./data/emailList"
 import TopText from "./components/TopText"
 
 export default function App() {
-	const [userInput, setUserInput] = React.useState("")
-	const [userEmail, setUserEmail] = React.useState("")
-    const [duplicate, setDuplicate] = React.useState(null)
-    
-	function handleChange(e) {
-		setUserInput(e.target.value)
-	}
-		
-/* Challenge
+  const [userInput, setUserInput] = React.useState("")
+  const [userEmail, setUserEmail] = React.useState("")
+  const [duplicate, setDuplicate] = React.useState(null)
+
+  function handleChange(e) {
+    setUserInput(e.target.value)
+  }
+
+  /* Challenge
 
     Nothing happens when the user clicks the "Subscribe" button. Your task is to make the sign-up form work by completing these tasks: 
     
@@ -36,28 +36,35 @@ export default function App() {
 		   placeholder text of the input become "Subscribe a friend", and you and be able to enter another email address and check it as well.
  */
 
-	return (
-		<form className="form">
-		
-			<TopText userEmail={userEmail} duplicate={duplicate}/>
-		
-        	<div>
-			
-				<input
-					required
-					placeholder={!userEmail ? "Enter your email" : "Subscribe a friend!"}
-					type="email"
-					name="email"
-					onChange={handleChange}
-					value={userInput}
-				/>
-                
-				<button type="submit">
-					Subscribe
-				</button>   
-				
-			</div>
-            
-		</form>
-	)
+  const isEmailListed = () => {
+    return emailList.find(
+      (email) => email.toLowerCase() === userInput.toLowerCase()
+    )
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setDuplicate(isEmailListed() ? true : false)
+    setUserEmail(userInput)
+    setUserInput("")
+  }
+
+  return (
+    <form className="form" onSubmit={handleSubmit}>
+      <TopText userEmail={userEmail} duplicate={duplicate} />
+
+      <div>
+        <input
+          required
+          placeholder={!userEmail ? "Enter your email" : "Subscribe a friend!"}
+          type="email"
+          name="email"
+          onChange={handleChange}
+          value={userInput}
+        />
+
+        <button type="submit">Subscribe</button>
+      </div>
+    </form>
+  )
 }
