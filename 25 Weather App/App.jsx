@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { weatherData } from "./data.ts"
+import Weather from "./components/Weather.jsx"
 
 /* Challenge
 
@@ -22,46 +23,24 @@ The weather data is currently hardcoded into the JSX. Your task is to insert it 
 */
 
 export default function App() {
-  const [currentArrayIndex, setCurrentArrayIndex] = useState(0)
+  const [currentWeather, setCurrentWeather] = useState(weatherData[0])
 
   const handleClick = () => {
-    setCurrentArrayIndex((prevIndex) => {
-      return prevIndex < weatherData.length - 1 ? prevIndex + 1 : 0
-    })
+    const index = currentWeather.id === 0 ? 1 : currentWeather.id === 1 ? 2 : 0
+
+    setCurrentWeather(weatherData[index])
   }
 
+  const icon =
+    currentWeather.condition === "Sunny"
+      ? "☀️"
+      : currentWeather.condition === "Rainy"
+      ? "🌧️"
+      : "❄️"
+
   return (
-    <div
-      className={`app-container ${weatherData[
-        currentArrayIndex
-      ].condition.toLowerCase()}-background`}>
-      <div className="weather-container">
-        <div className="icon">
-          {weatherData[currentArrayIndex].condition === "Sunny"
-            ? "☀️"
-            : weatherData[currentArrayIndex].condition === "Rainy"
-            ? "🌧️"
-            : "❄️"}
-        </div>
-        <div className="condition-text">
-          {weatherData[currentArrayIndex].condition}
-        </div>
-        <div className="temp-range-container">
-          <div className="low-temp-container">
-            <p className="low-temp-data">
-              {weatherData[currentArrayIndex].lowTemp}
-            </p>
-            <p>Low</p>
-          </div>
-          <div className="high-temp-container">
-            <p className="high-temp-data">
-              {weatherData[currentArrayIndex].highTemp}
-            </p>
-            <p>High</p>
-          </div>
-        </div>
-        <div className="day">{weatherData[currentArrayIndex].day}</div>
-      </div>
+    <div className={`app-container ${currentWeather.condition}-background`}>
+      <Weather currentWeather={currentWeather} icon={icon} />
       <button onClick={handleClick}>Test</button>
     </div>
   )
