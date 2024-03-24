@@ -8,74 +8,75 @@ import savedArticles from "./data/savedArticles"
 import trashedArticles from "./data/trashedArticles"
 
 export default function App() {
-	const [articleQueue, setArticleQueue] = React.useState(savedArticles)
-    
-	const stats = getStats()
+  const [articleQueue, setArticleQueue] = React.useState(savedArticles)
 
-	const articleComponents = articleQueue.map((articleData) => {
-		return <Article articleData={articleData} key={articleData.id} />
-	})
+  const stats = getStats()
 
-	const noArticlesMessage = <p className="no-articles-message">There are no articles to show.</p>
-    
-    function getStats() {
-		return {
-			numOfFavorites: favoritedArticles.length,
-			numOfArchived: archivedArticles.length,
-			numOfTrashed: trashedArticles.length,
-		}
-	}
+  const articleComponents = articleQueue.map((articleData) => {
+    return <Article articleData={articleData} key={articleData.id} />
+  })
 
-	function getTargetArticle(id) {
-		return savedArticles.find((item) => item.id === id)
-	}
+  const noArticlesMessage = (
+    <p className="no-articles-message">There are no articles to show.</p>
+  )
 
-	function removeFromSavedArticles(targetArticle) {
-		const targetIndex = savedArticles.indexOf(targetArticle)
-		savedArticles.splice(targetIndex, 1)
-	}  
-    
-    
-/*-----State Setting Functions-------------------------------------------*/
-    
-    function favorite(id) {
-		const targetArticle = getTargetArticle(id)
-		if (favoritedArticles.includes(targetArticle)) {
-			const targetIndex = favoritedArticles.indexOf(targetArticle)
-			favoritedArticles.splice(targetIndex, 1)
-		} else {
-			favoritedArticles.push(targetArticle)
-		}
-		setArticleQueue([...savedArticles])
-	}
-
-	function archive(id) {
-		const targetArticle = getTargetArticle(id)
-		removeFromSavedArticles(targetArticle)
-		archivedArticles.push(targetArticle)
-        setArticleQueue([...savedArticles])
-	}
-
-	function trash(id) {
-		const targetArticle = getTargetArticle(id)
-		removeFromSavedArticles(targetArticle)
-		if (favoritedArticles.includes(targetArticle)) {
-			const targetIndex = favoritedArticles.indexOf(targetArticle)
-			favoritedArticles.splice(targetIndex, 1)
-		}
-		trashedArticles.push(targetArticle)
-        setArticleQueue([...savedArticles])
-	}
-    
-    function toggleExpand(id) {
-        const targetArticle = getTargetArticle(id)
-        targetArticle.expanded = !targetArticle.expanded
-        setArticleQueue(savedArticles)
+  function getStats() {
+    return {
+      numOfFavorites: favoritedArticles.length,
+      numOfArchived: archivedArticles.length,
+      numOfTrashed: trashedArticles.length,
     }
-    
-/*-------------------------------------------------------------------------*/
+  }
 
-/* Challenge
+  function getTargetArticle(id) {
+    return savedArticles.find((item) => item.id === id)
+  }
+
+  function removeFromSavedArticles(targetArticle) {
+    const targetIndex = savedArticles.indexOf(targetArticle)
+    savedArticles.splice(targetIndex, 1)
+  }
+
+  /*-----State Setting Functions-------------------------------------------*/
+
+  function favorite(id) {
+    const targetArticle = getTargetArticle(id)
+    if (favoritedArticles.includes(targetArticle)) {
+      const targetIndex = favoritedArticles.indexOf(targetArticle)
+      favoritedArticles.splice(targetIndex, 1)
+    } else {
+      favoritedArticles.push(targetArticle)
+    }
+    setArticleQueue([...savedArticles])
+  }
+
+  function archive(id) {
+    const targetArticle = getTargetArticle(id)
+    removeFromSavedArticles(targetArticle)
+    archivedArticles.push(targetArticle)
+    setArticleQueue([...savedArticles])
+  }
+
+  function trash(id) {
+    const targetArticle = getTargetArticle(id)
+    removeFromSavedArticles(targetArticle)
+    if (favoritedArticles.includes(targetArticle)) {
+      const targetIndex = favoritedArticles.indexOf(targetArticle)
+      favoritedArticles.splice(targetIndex, 1)
+    }
+    trashedArticles.push(targetArticle)
+    setArticleQueue([...savedArticles])
+  }
+
+  function toggleExpand(id) {
+    const targetArticle = getTargetArticle(id)
+    targetArticle.expanded = !targetArticle.expanded
+    setArticleQueue([...savedArticles])
+  }
+
+  /*-------------------------------------------------------------------------*/
+
+  /* Challenge
 
     The four buttons for each article aren't working. Your task is to set them up as follows: 
     
@@ -111,12 +112,28 @@ export default function App() {
 		
  */
 
-	return (
-		<div className="wrapper">
-			<Header stats={stats} setArticleQueue={setArticleQueue} />
-			<div className="articles-container">
-				{articleQueue.length > 0 ? articleComponents : noArticlesMessage}
-			</div>
-		</div>
-	)
+  const handleClick = (e) => {
+    const data = e.target.dataset
+    if (data.buttonType === "favorite") {
+      favorite(data.articleId)
+    }
+    if (data.buttonType === "archive") {
+      archive(data.articleId)
+    }
+    if (data.buttonType === "trash") {
+      trash(data.articleId)
+    }
+    if (data.buttonType === "toggleExpand") {
+      toggleExpand(data.articleId)
+    }
+  }
+
+  return (
+    <div className="wrapper">
+      <Header stats={stats} setArticleQueue={setArticleQueue} />
+      <div className="articles-container" onClick={handleClick}>
+        {articleQueue.length > 0 ? articleComponents : noArticlesMessage}
+      </div>
+    </div>
+  )
 }
