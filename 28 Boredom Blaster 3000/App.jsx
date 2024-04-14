@@ -1,11 +1,10 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Header from "./components/Header"
 import ActivityCard from "./components/ActivityCard"
 import placeHolderData from "./data/placeHolderData"
 
 export default function App() {
-
-/* Challenge
+  /* Challenge
 
     The user's activities have been saved as keys for the Bored API. Your task is to use the keys to get the activities data as follows: 
     
@@ -21,23 +20,39 @@ export default function App() {
     Note: All you need to do is set the activitiesData state in the way described above. If you do this correctly, the activityCardElements variable on line 33 below will take care of rendering the activity cards for you. 
 */
 
-	const savedActivityKeys = [
-		8364626, 4688012, 6553978, 3699502, 9908721, 3136729, 5490351,
-		8827573, 9318514, 1668223, 3192099, 9008639, 4894697, 8033599, 5675880,
-		7114122, 4151544, 4558850, 3561421, 4286250
-	]
+  const savedActivityKeys = [
+    8364626, 4688012, 6553978, 3699502, 9908721, 3136729, 5490351, 8827573,
+    9318514, 1668223, 3192099, 9008639, 4894697, 8033599, 5675880, 7114122,
+    4151544, 4558850, 3561421, 4286250,
+  ]
 
-	const [activitiesData, setActivitiesData] = React.useState(placeHolderData) 
-	// placeHolderData has been imported from placeHolderData.js in the data folder.
+  const [activitiesData, setActivitiesData] = React.useState(placeHolderData)
+  // placeHolderData has been imported from placeHolderData.js in the data folder.
 
-	const activityCardElements = activitiesData.map((activityData, index) => (
-		<ActivityCard key={activityData.key} number={index + 1} {...activityData} />
-	))
-	
-	return (
-		<div className="wrapper">
-			<Header />
-			<div className="container">{activityCardElements}</div>
-		</div>
-	)
+  const activityCardElements = activitiesData.map((activityData, index) => (
+    <ActivityCard key={activityData.key} number={index + 1} {...activityData} />
+  ))
+
+  useEffect(() => {
+    async function getActivities() {
+      const responses = await Promise.all(
+        savedActivityKeys.map((key) => {
+          return fetch(`https://apis.scrimba.com/bored/api/activity?key=${key}`)
+        })
+      )
+      const data = await Promise.all(
+        responses.map((response) => response.json())
+      )
+      setActivitiesData(data)
+    }
+
+    getActivities()
+  }, [])
+
+  return (
+    <div className="wrapper">
+      <Header />
+      <div className="container">{activityCardElements}</div>
+    </div>
+  )
 }
